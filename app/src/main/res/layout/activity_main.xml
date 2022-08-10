@@ -4,28 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".MainActivity">
 
-   <androidx.appcompat.widget.LinearLayoutCompat
-       android:layout_width="match_parent"
-       android:orientation="vertical"
-       app:layout_constraintStart_toStartOf="parent"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintTop_toTopOf="parent"
-       android:layout_height="wrap_content">
-       <androidx.recyclerview.widget.RecyclerView
-           android:layout_width="match_parent"
-           android:id="@+id/rvRequired"
-           android:layout_height="wrap_content"/>
-       <androidx.recyclerview.widget.RecyclerView
-           android:layout_width="match_parent"
-           android:id="@+id/rvIsNotRequired"
-           android:layout_height="wrap_content"/>
-       <androidx.recyclerview.widget.RecyclerView
-           android:layout_width="match_parent"
-           android:id="@+id/rvPin"
-           android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/register"
+        android:id="@+id/tvRegister"
+        android:textSize="42sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-   </androidx.appcompat.widget.LinearLayoutCompat>
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvRequired"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/tvRegister"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnRegister"
+        app:layout_constraintStart_toStartOf="parent" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnRegister"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/registerBtn"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

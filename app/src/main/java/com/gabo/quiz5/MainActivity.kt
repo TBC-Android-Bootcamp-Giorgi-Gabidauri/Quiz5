@@ -1,46 +1,42 @@
 package com.gabo.quiz5
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log.d
+import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.gabo.quiz5.adapter.FieldModelListAdapter
 import com.gabo.quiz5.adapter.FieldsAdapter
 import com.gabo.quiz5.databinding.ActivityMainBinding
 import com.gabo.quiz5.helpers.ResultHandler
-import com.gabo.quiz5.model.Item
+import com.gabo.quiz5.helpers.itemProvider.pinField
+import com.gabo.quiz5.model.FieldModel
+import com.gabo.quiz5.model.Fields
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainVM by viewModels()
-    private val fieldsAdapterRequired: FieldsAdapter by lazy {
-        FieldsAdapter()
-    }
-    private val fieldsAdapterIsNotRequired: FieldsAdapter by lazy {
-        FieldsAdapter()
-    }
-    private val fieldsAdapterPin: FieldsAdapter by lazy {
-        FieldsAdapter()
+    private val fieldsAdapter: FieldsAdapter by lazy {
+        FieldsAdapter().also {
+            binding.rvRequired.adapter = it
+            binding.rvRequired.layoutManager = LinearLayoutManager(this)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setupAdapters()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setupObservers()
-    }
-
-    private fun setupAdapters() {
-        binding.rvRequired.adapter = fieldsAdapterRequired
-        binding.rvRequired.layoutManager = LinearLayoutManager(this)
-        binding.rvIsNotRequired.adapter = fieldsAdapterIsNotRequired
-        binding.rvIsNotRequired.layoutManager = LinearLayoutManager(this)
-        binding.rvPin.adapter = fieldsAdapterIsNotRequired
-        binding.rvPin.layoutManager = LinearLayoutManager(this)
+        setupClicks()
     }
 
     private fun setupObservers() {
@@ -49,19 +45,12 @@ class MainActivity : AppCompatActivity() {
                 viewModel.getList().collect {
                     when (it) {
                         is ResultHandler.Success -> {
-                            val required = mutableListOf<Item.GroupItems.FieldModel>()
-                            val isNotRequired = mutableListOf<Item.GroupItems.FieldModel>()
-                            it.list.ListGroupItems.forEach { groupItems ->
-                                groupItems.groupItems.forEach { fieldModel ->
-                                    if (fieldModel.required) {
-                                        required.add(fieldModel)
-                                    } else {
-                                        isNotRequired.add(fieldModel)
-                                    }
-                                }
-                            }
-                            fieldsAdapterRequired.submitList(required)
-                            fieldsAdapterIsNotRequired.submitList(isNotRequired)
+                            val list = it.list.map {
+                                Fields(it)
+                            }.toMutableList()
+                            list.add(pinField)
+                            fieldsAdapter.submitList(list)
+
                         }
                         is ResultHandler.Error -> {
                             Toast.makeText(this@MainActivity, it.errorMSg, Toast.LENGTH_SHORT)
@@ -71,11 +60,26 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-    private fun setupClicks(){
 
+//        binding.root.removeAllViews()
+//        repeat(5) {
+//            val editText = EditText(this)
+//            editText.layoutParams = ViewGroup.LayoutParams(
+//                ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT
+//            )
+//            binding.root.addView(editText)
+//        }
     }
-    private fun check(){
+
+    private fun setupClicks() {
+        binding.btnRegister.setOnClickListener {
+            check()
+        }
+    }
+    val myAdapter = FieldModelListAdapter()
+
+    private fun check() {
 
     }
 }
