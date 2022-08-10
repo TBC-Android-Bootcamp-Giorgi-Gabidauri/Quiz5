@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.getList().collect {
                     when (it) {
                         is ResultHandler.Success -> {
+                            binding.llFieldsWrapper.removeAllViews()
                             it.list.forEach {
                                 val fieldView = CustomFieldsView(this@MainActivity).apply { addFields(it) }
                                 binding.llFieldsWrapper.addView(fieldView)
